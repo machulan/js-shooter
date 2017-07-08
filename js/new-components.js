@@ -106,7 +106,7 @@
         this.speed = { x: 0, y: 0, rotation: 0 };
 
         this.fireRate = 10; // per second (1000 ms) (max 50)
-        this.bulletNumber = 30;
+        this.bulletNumber = 100;
         this.maxBulletNumber = 300;
 
         this.bombRate = 1; // per second (1000 ms) (bomb per 5 seconds (0.2))
@@ -152,7 +152,7 @@
         setTimeout(function() {
             renderer.clearCircle({ center: self.center, radius: self.radius });
             window.gameOver();
-        }.bind(self), 5000);
+        }.bind(self), 3000);
 
         // flies hatch in this place
         var center1 = Object.assign({}, self.center);
@@ -160,7 +160,9 @@
         window.flies.push(new Fly(center1, 20));
         window.flies.push(new Fly(center2, 15));
 
-        player.update = function() {};
+        //window.keys = []
+
+        // player.rotation = function() {};
         // window.spiders = window.spiders.filter(function(spider) { return spider != self }, self);
     }
 
@@ -833,7 +835,7 @@
         window.spiders.forEach(function(spider) {
             if (self.hasIntersectionWith(spider)) {
                 hasIntersectionWithSpiders = true;
-                spider.reduceHealthBy(30); // TODO tree.burn(); // TODO bulletPower changes depending on the distance between player and spider
+                spider.reduceHealthBy(10); // TODO tree.burn(); // TODO bulletPower changes depending on the distance between player and spider
             }
         });
 
@@ -937,7 +939,7 @@
         Bonus.prototype.update.apply(self, arguments);
 
         if (self && self.hasIntersectionWith(window.player)) {
-            window.player.addBullets(30);
+            window.player.addBullets(50);
             clearTimeout(self.timeout);
             self.disappear();
         }

@@ -6,8 +6,12 @@ var timerElement = document.getElementById('timer');
 var scoreElement = document.getElementById('score');
 var gamePulseElement = document.getElementById('game-pulse');
 
-function updateTimer() {
-    var dt = Date.now() - startTime;
+function getTime() {
+    return Date.now() - startTime;
+}
+
+function getTimerString() {
+    var dt = getTime();
 
     var seconds = Math.floor(dt / 1000);
     var minutes = Math.floor(seconds / 60);
@@ -20,7 +24,11 @@ function updateTimer() {
         seconds = "0" + seconds;
     }
 
-    timerElement.innerHTML = minutes + ":" + seconds;
+    return minutes + ":" + seconds;
+}
+
+function updateTimer() {
+    timerElement.innerHTML = getTimerString();
 }
 
 function updateScore(newScore) {
@@ -31,9 +39,6 @@ function updateGamePulse(newGamePulse) {
     gamePulseElement.innerHTML = newGamePulse;
 }
 
-function getTime() {
-    return Date.now() - startTime;
-}
 
 function welcome() {
     // run welcome screen
@@ -78,7 +83,7 @@ function init() {
     updateScore(0);
 
     //initialize game time 
-    updateGamePulse(0);
+    // updateGamePulse(0);
 
     // event listeners
     document.getElementById('start-game').addEventListener('click', start);
@@ -158,7 +163,8 @@ function init() {
     bonuses.push(new components.CureBonus({ x: 300, y: 600 }));
 
     // initialize game
-    setTimeout(function() { player.die() }.bind(this), 2000);
+    // setTimeout(function() { player.die() }.bind(this), 2000);
+    // setTimeout(function() { win(); }.bind(this), 10000);
 
 
     // add canvas
@@ -227,13 +233,15 @@ function update() {
         bonus.update();
     });
 
-
-
-
-    // console.log('game updating...');
+    updateScore(player.score);
+    // updateScore(9999999999999);
     updateTimer();
+    // updateGamePulse(Date.now() - startTime);
+
     // updateScore(Date.now() - startTime);
-    updateGamePulse(Date.now() - startTime);
+
+
+
     // if (Date.now() - startTime > 5000) {
     //     // gameOver();
     //     win();
@@ -294,6 +302,10 @@ function win() {
 
     // hide toolbar
     document.getElementById('toolbar').style.display = 'none';
+
+    // fill win time and win score
+    document.getElementById('win-time').innerHTML = getTimerString();
+    document.getElementById('win-score').innerHTML = player.score;
 
     // show win screen
     document.getElementById('win-play-again').addEventListener('click', init);
