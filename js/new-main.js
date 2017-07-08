@@ -4,6 +4,11 @@ var interval;
 
 var timerElement = document.getElementById('timer');
 var scoreElement = document.getElementById('score');
+var healthElement = document.getElementById('health');
+var bulletNumberElement = document.getElementById('bullet-number');
+var bombNumberElement = document.getElementById('bomb-number');
+
+
 var gamePulseElement = document.getElementById('game-pulse');
 
 function getTime() {
@@ -34,6 +39,19 @@ function updateTimer() {
 function updateScore(newScore) {
     scoreElement.innerHTML = newScore;
 }
+
+function updateHealth(newHealth) {
+    healthElement.innerHTML = newHealth;
+}
+
+function updateBulletNumber(newBulletNumber) {
+    bulletNumberElement.innerHTML = newBulletNumber;
+}
+
+function updateBombNumber(newBombNumber) {
+    bombNumberElement.innerHTML = newBombNumber;
+}
+
 
 function updateGamePulse(newGamePulse) {
     gamePulseElement.innerHTML = newGamePulse;
@@ -205,8 +223,8 @@ function start() {
     interval = setInterval(update, 50);
 }
 
-var curcenter = { x: 100, y: 200 };
-var prevcenter = { x: 100, y: 200 };
+// var curcenter = { x: 100, y: 200 };
+// var prevcenter = { x: 100, y: 200 };
 
 function update() {
     // update game
@@ -233,9 +251,14 @@ function update() {
         bonus.update();
     });
 
-    updateScore(player.score);
-    // updateScore(9999999999999);
     updateTimer();
+    updateScore(player.score);
+    updateHealth(player.health);
+    updateBulletNumber(player.bulletNumber);
+    updateBombNumber(player.bombNumber);
+
+    // updateScore(9999999999999);
+
     // updateGamePulse(Date.now() - startTime);
 
     // updateScore(Date.now() - startTime);
@@ -250,10 +273,10 @@ function update() {
 
     // document.getElementById('new-game').addEventListener('click', gameOver);
 
-    curcenter.x += 4;
+    // curcenter.x += 4;
 
-    var context = renderer.getContext();
-    var canvas = renderer.getCanvas();
+    // var context = renderer.getContext();
+    // var canvas = renderer.getCanvas();
 
     // context.fillStyle = "#ddd";  
     // context.fillRect(0, 0, canvas.width, canvas.height);
@@ -266,8 +289,8 @@ function update() {
 
 
 
-    prevcenter.x = curcenter.x;
-    prevcenter.y = curcenter.y;
+    // prevcenter.x = curcenter.x;
+    // prevcenter.y = curcenter.y;
 
     // pause();
 }
