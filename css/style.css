@@ -15,7 +15,8 @@ canvas {
     /*background-color: #ffdead; navajowhite*/
     /*background-color: #FFfF50;*/
     /*background: url(../images/1indestructible_wall.png) no-repeat top center;*/
-    background: url(../images/rocks1_cr.png) no-repeat;
+    /*background: url(../images/rocks1_cr.png) no-repeat;*/
+    /*background: url(../images/background-wheat.png) repeat top center;*/
 }
 
 #game-area {
@@ -68,13 +69,33 @@ button {
     margin-right: 30px;
 }
 
+#timer-icon {
+    float: right;
+    /*color: black;*/
+    color: #eee;
+    /*font-size: 2em;*/
+    /*font-size: 30px;*/
+    /*height: 40px;*/
+    margin-right: 5px;
+}
+
 #score {
     float: right;
     /*color: black;*/
     color: #eee;
     /*font-size: 2em;*/
     font-size: 30px;
-    margin-right: 30px;
+    margin-right: 60px;
+}
+
+#score-icon {
+    float: right;
+    /*color: black;*/
+    color: #eee;
+    /*font-size: 2em;*/
+    /*font-size: 30px;*/
+    /*height: 40px;*/
+    margin-right: 5px;
 }
 
 #game-pulse {
@@ -93,10 +114,30 @@ button {
     /*font-size: 2em;*/
     font-size: 30px;
     /*height: 40px;*/
-    margin-right: 50px;
+    margin-right: 70px;
 }
 
 #health-icon {
+    float: right;
+    /*color: black;*/
+    color: #eee;
+    /*font-size: 2em;*/
+    /*font-size: 30px;*/
+    /*height: 40px;*/
+    margin-right: 5px;
+}
+
+#cure-number {
+    float: right;
+    /*color: black;*/
+    color: #eee;
+    /*font-size: 2em;*/
+    font-size: 30px;
+    /*height: 40px;*/
+    margin-right: 50px;
+}
+
+#cure-number-icon {
     float: right;
     /*color: black;*/
     color: #eee;
@@ -272,7 +313,7 @@ img {
 }
 
 #game-over {
-    height: 200px;
+    height: 400px;
     text-align: center;
     color: white;
 }
@@ -280,6 +321,11 @@ img {
 #game-over h1 {
     font-size: 3em;
     font-family: sans-serif;
+}
+
+#game-over h2 {
+    /*font-size: 1em;*/
+    font-family: Verdana;
 }
 
 #game-over #play-again {

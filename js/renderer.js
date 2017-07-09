@@ -148,8 +148,8 @@
         makeCircle: makeCircle,
         getBounds: getBounds,
         clearGameArea: clearGameArea,
-        getContext: getContext,
-        getCanvas: getCanvas,
+        // getContext: getContext,
+        // getCanvas: getCanvas,
         makeTurnedCircle: makeTurnedCircle
     };
 })();

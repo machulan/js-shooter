@@ -1,179 +1,28 @@
-// "use strict";
+var startTime;
+var pauseStartTime;
+var interval;
 
-// import { one } from "./new-components";
-
-// function Article() {
-//     Article.count++;
-//     this.x = 199;
-// }
-
-// Article.count = 0;
-// Article.showCount = function() {
-//     console.log('art');
-//     console.log(this.count + 10);
-//     alert(this.count);
-//     console.log(this.x);
-// }
-
-// // new Article();
-// Article.showCount();
-
-// // 'use strict';
-// let a = 1;
-// const a = 1;
-// alert(a);
-
-var canvas;
-var context;
-
-// function createGameCanvas() {
-//     canvas = document.createElement('canvas');
-//     // handling canvas
-//     canvas.width = window.innerWidth;
-//     canvas.height = window.innerHeight;
-
-//     context = canvas.getContext('2d');
-//     document.body.insertBefore(canvas, document.body.childNodes[0]);
-// }
-
-var game;
-var isGameOver;
-
-var timer;
-var startTime = new Date().getTime();
-var pauseStartTime = 0;
-
-var player;
-var playerImage;
-var home;
-
-var enemiesCount = 1;
-var enemies = [];
-// var obstacles = [
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-//     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-// ]
-var obstacles = [
-    // [50, 50, 30, 60, 1],
-    // [100, 200, 200, 300],
-]; // x, y, width, height, type
-var obstacles = getRandomObstacles(40);
-var obstacles = createObstacles();
-
-var destructibleWallImage;
-var indestructibleWallImage;
-var walls = [];
-
-// var canvas = document.createElement('canvas');
+var timerElement = document.getElementById('timer');
+var scoreElement = document.getElementById('score');
+var healthElement = document.getElementById('health');
+var cureNumberElement = document.getElementById('cure-number');
+var bulletNumberElement = document.getElementById('bullet-number');
+var bombNumberElement = document.getElementById('bomb-number');
 
 
+var gamePulseElement = document.getElementById('game-pulse');
 
-/*var game = {
-    canvas: document.createElement('canvas'),
-    // canvas: canvas,
-    initialize: function() {
-        // handling canvas
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+function getTime() {
+    return Date.now() - startTime;
+}
 
-        this.context = this.canvas.getContext('2d');
-        // this.context = context;
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+function getTimerString() {
+    var dt = getTime();
 
-        drawBackgroundGrid(this.canvas);
+    var seconds = Math.floor(dt / 1000);
+    var minutes = Math.floor(seconds / 60);
+    seconds %= 60;
 
-        // createPatterns(this.canvas);
-
-        // run animation loop
-        this.interval = setInterval(updateGame, 40); //20
-        this.frameNumber = 0;
-        // requestAnimationFrame(updateGame);
-
-        // event listeners
-        window.addEventListener('keydown', function(e) {
-            // e.preventDefault();
-            game.keys = (game.keys || []);
-            game.keys[e.keyCode] = true; // = (e.type == 'keydown')
-            // console.log('pressed ' + e.keyCode + ' keys: ' + keys);
-        });
-        window.addEventListener('keyup', function(e) {
-            // game.keys = (game.keys || []);
-            game.keys[e.keyCode] = false;
-        });
-    },
-    stop: function() {
-        clearInterval(this.interval);
-        this.stopped = true;
-        pauseStartTime = new Date().getTime();
-        // alert('clearing interval...');
-    },
-    stopped: false,
-    clearCanvas: function() {
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    },
-    createObstacles: function(obstacles) {
-        walls = [];
-        for (var i = 0; i < obstacles.length; i++) {
-            var obstacle = obstacles[i];
-            walls.push(new IndestructibleWall(obstacle[0], obstacle[1], obstacle[2], obstacle[3]));
-            // this.context.drawImage(this.image, this.x, this.y, this.width, this.height);
-        }
-    },
-    getCanvasEdges: function() {
-        // left, right, top, bottom
-        return [0, this.canvas.width, 0, this.canvas.height];
-    }
-}*/
-
-function updateGame() {
-    game.frameNumber += 1;
-    // console.log('updating...');
-
-    // game.clearCanvas();
-
-    // background canvas
-    // drawBackgroundGrid(game.canvas);
-
-    // player
-    player.stop();
-    player.updateSpeeds();
-    player.updatePosition();
-    player.update();
-
-    // home
-    home.stop();
-    home.updateSpeeds();
-    home.updatePosition();
-    home.update();
-
-    // enemies
-    for (var i = 0; i < enemies.length; i++) {
-        var changeSpeeds = (game.frameNumber % randomIntInRange(30, 60)) == 0;
-        if (game.frameNumber == 1 || changeSpeeds) { //|| game.frameNumber % 30 == 0) {
-            enemies[i].stop();
-            enemies[i].updateSpeeds();
-        }
-
-        enemies[i].updatePosition();
-        enemies[i].update();
-    }
-
-    // obstacles
-    for (var i = 0; i < walls.length; i++) {
-        // walls = [];
-        walls[i].update();
-    }
-
-    // timer 
-    var passedTime = new Date(new Date().getTime() - startTime);
-    var minutes = passedTime.getMinutes();
-    var seconds = passedTime.getSeconds();
     if (minutes < 10) {
         minutes = "0" + minutes;
     }
@@ -181,186 +30,466 @@ function updateGame() {
         seconds = "0" + seconds;
     }
 
-    timer.text = minutes + ":" + seconds;
-    timer.update();
+    return minutes + ":" + seconds;
+}
 
-    // gameover
-    // if (game.frameNumber > 50) {
-    //     // alert(200);
-    //     game.gameOver();
+function updateTimer() {
+    timerElement.innerHTML = getTimerString();
+}
+
+function updateScore(newScore) {
+    scoreElement.innerHTML = newScore;
+}
+
+function updateHealth(newHealth) {
+    healthElement.innerHTML = newHealth;
+}
+
+function updateCureNumber(newCureNumber) {
+    cureNumberElement.innerHTML = newCureNumber;
+}
+
+function updateBulletNumber(newBulletNumber) {
+    bulletNumberElement.innerHTML = newBulletNumber;
+}
+
+function updateBombNumber(newBombNumber) {
+    bombNumberElement.innerHTML = newBombNumber;
+}
+
+
+function updateGamePulse(newGamePulse) {
+    gamePulseElement.innerHTML = newGamePulse;
+}
+
+
+function welcome() {
+    // run welcome screen
+    document.getElementById('welcome').style.display = 'block';
+    document.getElementById('welcome-overlay').style.display = 'block';
+
+    document.getElementById('init-game').addEventListener('click', function() {
+        document.getElementById('welcome').style.display = 'none';
+        document.getElementById('welcome-overlay').style.display = 'none';
+
+        init();
+    });
+
+}
+
+var keys = [];
+
+var level;
+
+var player;
+var home;
+var trees = [];
+var rocks = [];
+var rockCreator;
+
+var flies = [];
+var flyGenerator;
+
+var spiders = [];
+
+var bombs = [];
+var bullets = [];
+
+var bonusGenerator;
+var bonuses = [];
+
+var framesPerSecond = 20;
+// var timeInterval = 1000 / framesPerSecond;
+
+function init() {
+    // initialize new game
+    console.log('game init...');
+
+    pause();
+
+    // initialize timer
+    startTime = Date.now();
+    pauseStartTime = Date.now();
+    updateTimer();
+
+    // initialize score
+    updateScore(0);
+
+    //initialize game pulse
+    // updateGamePulse(0);
+
+    // event listeners
+    document.getElementById('start-game').addEventListener('click', start);
+    document.getElementById('pause-game').addEventListener('click', pause);
+    document.getElementById('new-game').addEventListener('click', init);
+
+    // show toolbar
+    document.getElementById('toolbar').style.display = 'block';
+    // hide game over screen
+    document.getElementById('game-over').style.display = 'none';
+    document.getElementById('game-over-overlay').style.display = 'none';
+    // hide win screen
+    document.getElementById('win').style.display = 'none';
+    document.getElementById('win-overlay').style.display = 'none';
+
+    // add game content wrapper
+    var gameArea = document.getElementById('game-area');
+    gameArea.style.display = 'block';
+
+    // initialize creator (painter, renderer)
+    renderer.init();
+
+    // initialize keydown and keyup event listeners
+    window.addEventListener('keydown', function(e) {
+        e.preventDefault();
+        // debugger;
+        keys = (keys || []);
+        keys[e.keyCode] = true; // = (e.type == 'keydown')
+        // console.log('pressed ' + e.keyCode); // + ' keys: ' + keys);
+    });
+    window.addEventListener('keyup', function(e) {
+        keys = (keys || []); // delete this string
+        keys[e.keyCode] = false;
+    });
+
+    // initialize level
+    level = new levels.Level(levels.simpleLevelMap);
+    level.construct();
+
+    // initialize trees
+    // var center = { x: 100, y: 100 };
+    // var radius = 25;
+    // trees.push(new components.Tree(center, radius));
+    // var center = { x: 130, y: 100 };
+    // var radius = 30;
+    // trees.push(new components.Tree(center, radius));
+
+    // initialize rocks
+    // var center = { x: 200, y: 200 };
+    // var radius = 30;
+    // rocks.push(new components.Rock(center, radius));
+    // var center = { x: 250, y: 220 };
+    // rocks.push(new components.Rock(center, radius));
+
+    // initialize rock creator
+    // rockCreator = new generators.RockCreator();
+    // for (var i = 0; i < 0; i++) {
+    //     rocks.push(rockCreator.create());
     // }
+
+    // initialize player
+    // var center = { x: 300, y: 300 };
+    // var radius = 40;
+    // player = new components.Player(center, radius);
+
+
+    // initialize home
+    // var center = { x: 300, y: 400 };
+    // var radius = 50;
+    // home = new components.Home(center, radius);
+
+    // initialize flies
+    // var center = { x: 250, y: 500 };
+    // var radius = 15; // 25
+    // flies.push(new components.Fly(center, radius));
+
+    // initialize fly generator
+    flyGenerator = new generators.FlyGenerator();
+
+    // initialize spiders (enemies)
+    // var center = { x: 400, y: 400 };
+    // var radius = 25;
+    // spiders.push(new components.Spider(center, radius));
+    // var center = { x: 500, y: 500 };
+    // var radius = 80; // 40 60 
+    // spiders.push(new components.Spider(center, radius));
+    // var center = { x: 1000, y: 500 };
+    // var radius = 100; // 40 60 
+    // spiders.push(new components.Spider(center, radius));
+
+    // initialize bullet bonus
+    // bonuses.push(new components.BulletBonus({ x: 200, y: 600 }));
+    // bonuses.push(new components.CureBonus({ x: 300, y: 600 }));
+
+    // initialize bonus generator
+    bonusGenerator = new generators.BonusGenerator();
+
+    // initialize game
+    // setTimeout(function() { player.die() }.bind(this), 2000);
+    // setTimeout(function() { win(); }.bind(this), 10000);
+
+
+    // run animation
+    start();
 }
 
-function run() {
-    // var child = new Child(3, 5);
+function start() {
+    // run animation
+    console.log('game started...');
+
+    // fix toolbar
+    document.getElementById('start-game').disabled = true;
+    document.getElementById('pause-game').disabled = false;
+
+    // if was paused
+    startTime += Date.now() - pauseStartTime;
+
+    // run loop
+    interval = setInterval(update, 1000 / framesPerSecond); // 50 // TODO 40 change bonuse animation
 }
 
-function startGame() {
-    if (game && game.stopped) {
-        //20
-        startTime += new Date().getTime() - pauseStartTime;
-        // pauseStartTime = 0;
-        game.stopped = false;
-        game.interval = setInterval(updateGame, 50);
-        return;
-    }
+// var curcenter = { x: 100, y: 200 };
+// var prevcenter = { x: 100, y: 200 };
 
-    if (!game) {
-        // hide game over screen
-        document.getElementById('game-over').style.display = 'none';
-        document.getElementById('game-over-overlay').style.display = 'none';
-
-        document.getElementById('start-game-button').disabled = false;
-        document.getElementById('pause-game-button').disabled = false;
+function update() {
+    // update game
 
 
-        var canvas = document.querySelector('canvas');
-        if (!canvas) {
-            canvas = document.createElement('canvas');
-        } else {
-            canvas.parentNode.removeChild(canvas);
-        }
-
-        game = {
-            canvas: canvas, //document.createElement('canvas'),
-            // canvas: canvas,
-            initialize: function() {
-                // handling canvas
-                this.canvas.width = window.innerWidth; //800; 
-                this.canvas.height = window.innerHeight; // 600;
-
-                this.context = this.canvas.getContext('2d');
-                // this.context = context;
-                document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-
-                // drawBackgroundGrid(this.canvas);
-
-                // createPatterns(this.canvas);
-
-                // run animation loop
-                this.interval = setInterval(updateGame, 50); //20
-                this.frameNumber = 0;
-                // requestAnimationFrame(updateGame);
-
-                // event listeners
-                window.addEventListener('keydown', function(e) {
-                    // e.preventDefault();
-                    game.keys = (game.keys || []);
-                    game.keys[e.keyCode] = true; // = (e.type == 'keydown')
-                    // console.log('pressed ' + e.keyCode + ' keys: ' + keys);
-                });
-                window.addEventListener('keyup', function(e) {
-                    // game.keys = (game.keys || []);
-                    game.keys[e.keyCode] = false;
-                });
-            },
-            stop: function() {
-                clearInterval(this.interval);
-                this.stopped = true;
-                pauseStartTime = new Date().getTime();
-                // alert('clearing interval...');
-            },
-            stopped: false,
-            isGameOver: false,
-            // Game over
-            gameOver: function() {
-                document.getElementById('game-over').style.display = 'block';
-                document.getElementById('game-over-overlay').style.display = 'block';
-
-                document.getElementById('start-game-button').disabled = true;
-                document.getElementById('pause-game-button').disabled = true;
-
-                isGameOver = true;
-                game.isGameOver = true;
-                game.stop();
-            },
-            clearCanvas: function() {
-                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            },
-            createObstacles: function(obstacles) {
-                walls = [];
-                for (var i = 0; i < obstacles.length; i++) {
-                    var obstacle = obstacles[i];
-                    walls.push(new IndestructibleWall(obstacle[0], obstacle[1], obstacle[2], obstacle[3]));
-                    // this.context.drawImage(this.image, this.x, this.y, this.width, this.height);
-                }
-            },
-            getCanvasEdges: function() {
-                // left, right, top, bottom
-                return [0, this.canvas.width, 0, this.canvas.height];
-            }
-        };
-    }
-
-    game.initialize();
-    // score = new Component("30px", "Consolas", "black", 280, 40, "text");
-    startTime = new Date().getTime();
-    timer = new Timer(10, game.canvas.height - 10, "adsfadfs", "30px", "Verdana", "black");
-    //alert(timer);
-
-    // setTimeout(game.createObstacles(obstacles), 5000);
-    // alert('asdasd');
-    // obstacles = [];
-    // obstacles = getRandomObstacles(40);
-    // obstacles = createObstacles();
-    game.createObstacles(obstacles);
-    // alert(walls.length);
-
-    // unit = new Unit();
-    player = new Player(200, 600, 50, 50);
-    home = new Home(50, 550, 50, 50);
-    // for (var i = 0; i < 2; i++) {
-    //     enemies.push(new Enemy(500, 600, 50, 50));
-    // // }
-    // enemies.push(new Enemy(1000, 600, 30, 30));
-    // enemies.push(new Enemy(800, 600, 70, 70));
-    // enemies.push(new Enemy(500, 600, 50, 50));
-    enemies = [];
-    enemies.push(new Enemy(250, 500, 70, 70));
-
-    // enemies.push(new Enemy(400, 600, 70, 70));
-    // enemies.push(new Enemy(300, 600, 30, 30));
-    // enemies.push(new Enemy(1200, 600, 50, 50));
-
-    // enemies.push(new Enemy(1000, 70, 30, 30));
-    // enemies.push(new Enemy(800, 70, 70, 70));
-    // enemies.push(new Enemy(500, 70, 50, 50));
+    player.update();
+    spiders.forEach(function(spider) {
+        spider.update();
+    });
+    rocks.forEach(function(rock) {
+        rock.update();
+    })
+    flies.forEach(function(fly) {
+        fly.update();
+    });
+    bonuses.forEach(function(bonus) {
+        bonus.update();
+    });
+    trees.forEach(function(tree) {
+        tree.update();
+    });
+    bombs.forEach(function(bomb) {
+        bomb.update();
+    });
+    bullets.forEach(function(bullet) {
+        bullet.update();
+    });
 
 
-    // enemies.push(new Enemy(400, 70, 70, 70));
-    // enemies.push(new Enemy(300, 70, 30, 30));
-    // enemies.push(new Enemy(1200, 70, 50, 50));
+    flyGenerator.update();
+    bonusGenerator.update();
 
-    // enemies.push(new Enemy(1000, 370, 30, 30));
-    // enemies.push(new Enemy(800, 370, 70, 70));
-    // enemies.push(new Enemy(500, 370, 50, 50));
+    updateTimer();
+    updateScore(player.score);
+    updateHealth(player.health);
+    updateCureNumber(player.cureNumber);
+    updateBulletNumber(player.bulletNumber);
+    updateBombNumber(player.bombNumber);
+
+    // updateScore(9999999999999);
+
+    // updateGamePulse(Date.now() - startTime);
+
+    // updateScore(Date.now() - startTime);
 
 
-    // enemies.push(new Enemy(400, 370, 70, 70));
-    // enemies.push(new Enemy(300, 370, 30, 30));
-    // enemies.push(new Enemy(1200, 370, 50, 50));
 
-    // requestAnimationFrame(updateGame);
+    // if (Date.now() - startTime > 5000) {
+    //     // gameOver();
+    //     win();
+    // }
+
+
+    // document.getElementById('new-game').addEventListener('click', gameOver);
+
+    // curcenter.x += 4;
+
+    // var context = renderer.getContext();
+    // var canvas = renderer.getCanvas();
+
+    // context.fillStyle = "#ddd";  
+    // context.fillRect(0, 0, canvas.width, canvas.height);
+    // renderer.makeCircle({ center: prevcenter, radius: 60, image: resourses.get('images/Machulazz_face.png') });
+
+    // a = 0 / 0;
+
+    // renderer.clearCircle({ center: prevcenter, radius: 50 });
+    // renderer.makeCircle({ center: curcenter, radius: 50, image: resourses.get('images/Machulazz_face.png') });
+
+
+
+    // prevcenter.x = curcenter.x;
+    // prevcenter.y = curcenter.y;
+
+    // pause();
 }
 
-function pauseGame() {
-    game.stop();
+function pause() {
+    // stop animation
+    console.log('game paused...')
+
+    // fix toolbar
+    document.getElementById('pause-game').disabled = true;
+    document.getElementById('start-game').disabled = false;
+
+    // save pause start time
+    pauseStartTime = Date.now();
+
+    // stop loop
+    clearInterval(interval);
 }
 
-function restartGame() {
-    // game.stop();
-    // obstacles = getRandomObstacles(20);
-    delete game.canvas;
-    game = null;
-    // alert('restart');
-    // delete game;
-    obstacles = [];
-    obstacles = createObstacles();
-    startGame();
+function win() {
+    // win
+    pause();
+
+    // remove game area
+    var gameArea = document.getElementById('game-area');
+    gameArea.style.display = 'none';
+
+    // stop game
+    document.getElementById('start-game').disabled = true;
+    document.getElementById('pause-game').disabled = true;
+    // document.getElementById('new-game').disabled = true;
+
+    // hide toolbar
+    document.getElementById('toolbar').style.display = 'none';
+
+    // fill win time and win score
+    document.getElementById('win-time').innerHTML = getTimerString();
+    document.getElementById('win-score').innerHTML = player.score;
+
+    // show win screen
+    document.getElementById('win-play-again').addEventListener('click', init);
+    document.getElementById('win').style.display = 'block';
+    document.getElementById('win-overlay').style.display = 'block';
 }
 
+function gameOver() {
+    // game over
+    pause();
 
-window.addEventListener('run', run);
-run();
+    // remove canvas
+    // var canvas = document.querySelector('canvas');
+    // canvas.parentNode.removeChild(canvas);
 
-document.getElementById('play-again').addEventListener('click', restartGame);
+    // remove game area
+    var gameArea = document.getElementById('game-area');
+    gameArea.style.display = 'none';
+
+    // stop game
+    document.getElementById('start-game').disabled = true;
+    document.getElementById('pause-game').disabled = true;
+    // document.getElementById('new-game').disabled = true;
+
+    // hide toolbar
+    document.getElementById('toolbar').style.display = 'none';
+
+    // fill game over time and game over score
+    document.getElementById('game-over-time').innerHTML = getTimerString();
+    document.getElementById('game-over-score').innerHTML = player.score;
+
+    // show game over screen
+    document.getElementById('play-again').addEventListener('click', init);
+    document.getElementById('game-over').style.display = 'block';
+    document.getElementById('game-over-overlay').style.display = 'block';
+}
+
+// begin resourses loading
+resourses.load(['images/home.png',
+    // 'images/green_circle.png',
+    'images/player.png',
+    // 'images/Machulazz_face.png',
+    // 'images/enemy.png',
+    // 'images/red_circle.png',
+    // 'images/sergey.jpg',
+    // 'images/indestructible_wall.png',
+    // 'images/small_box.png',
+    // 'images/box1_cr.png',
+    // 'images/small_box_1.png',
+    'images/tree.png',
+    'images/rock.png',
+    'images/player.png',
+    'images/home.png',
+    'images/fly.png',
+    'images/spider_frame_0.png',
+    'images/spider_frame_1.png',
+    'images/spider_frame_2.png',
+    'images/spider_frame_3.png',
+    // 'images/arrow.png',
+    'images/bomb_frame_0.png',
+    'images/bomb_frame_1.png',
+    'images/bomb_frame_2.png',
+    'images/bomb_frame_3.png',
+    // 'images/explosion_frame_original.png',
+    'images/explosion_frame_0.png',
+    'images/explosion_frame_1.png',
+    'images/explosion_frame_2.png',
+    'images/bullet.png',
+    'images/bullet-bonus.png',
+    'images/cure-bonus.png',
+    'images/shit-piece.png'
+]);
+// when resourses loaded show welcome screen
+resourses.onload(welcome);
+
+
+
+
+window.addEventListener('click', function(e) {
+    e.preventDefault();
+    // debugger;
+    var x = e.clientX;
+    var y = Math.round(parseFloat(e.clientY) * 100 / 94);
+    // var y = (+e.clientY * 100 / 94).toString(); // ; // / 2;
+    var coords = '(' + x + ', ' + y + ')';
+    updateGamePulse(coords);
+});
+
+// temp CLEAR CIRCLE:
+// var curcenter = { x: 100, y: 200 };
+// var prevcenter = curcenter;
+
+// function update() {
+//     curcenter.x += 4;
+//     var ctx = renderer.getContext();
+//     ctx.fillStyle = "#ff9900";
+//     ctx.rect(0, 0, 1366, 662);
+//     ctx.fill();
+
+
+//     renderer.clearCircle({ center: prevcenter, radius: 50 });
+//     renderer.makeCircle({ center: curcenter, radius: 50, image: resourses.get('images/Machulazz_face.png') });
+
+//     prevcenter = curcenter;
+// }
+
+
+
+
+//below was
+
+
+// function init() {
+//     console.log('init running...');
+//     document.getElementById('play-again').addEventListener('click', function() {
+//         reset();
+//     });
+
+//     reset();
+//     startTime = Date.now();
+//     main();
+// }
+
+// function main() {
+//     var dt = Date.now() - startTime;
+//     update(dt);
+//     render();
+//     requestAnimationFrame(main);
+// }
+
+// function update(dt) {
+//     handleInput();
+
+// }
+
+// function render(dt) {
+
+// }
+
+// function pause() {
+
+// }

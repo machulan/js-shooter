@@ -20,6 +20,11 @@ function randomIntInRange(minValue, maxValue) {
     return Math.round(Math.random() * (maxValue - minValue)) + minValue;
 }
 
+
+
+// TODO 
+// below trash!
+
 function getRandomObstacles(count) {
     console.log('random obstacles creating...')
     result = [];

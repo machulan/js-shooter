@@ -20,7 +20,7 @@
     <div id="welcome">
         <h1>Welcome!</h1>
         <h2>A long time ago in a galaxy far, far away battle begins...</h2>
-        <h2>Player VS Circles</h2>
+        <h2>Batya VS Spiders</h2>
         <button id="init-game">Start Game</button>
     </div>
 
@@ -41,6 +41,10 @@
 
     <div id="game-over">
         <h1>GAME OVER</h1>
+        <h2>SCORE</h2>
+        <h2 id="game-over-score">9999</h2>
+        <h2>TIME</h2>
+        <h2 id="game-over-time">00:00</h2>
         <button id="play-again">Play Again</button>
     </div>
 
@@ -73,31 +77,31 @@
             <button id="pause-game">Pause</button>
             <button id="new-game">New Game</button>
             <div id="timer">00:00</div>
+            <div id="timer-icon"><img src="images/timer.png" /></div>
             <div id="score">0</div>
-            <div id="game-pulse"></div>
+            <div id="score-icon"><img src="images/score.png" /></div>
             <div id="health"></div>
-            <div id="health-icon"><img src="images/cure-bonus.png" /></div>
+            <div id="health-icon"><img src="images/heart.png" /></div>
+            <div id="cure-number"></div>
+            <div id="cure-number-icon"><img src="images/cure-bonus.png" /></div>
             <div id="bullet-number"></div>
             <div id="bullet-number-icon"><img src="images/bullet-bonus.png" /></div>
             <div id="bomb-number"></div>
             <div id="bomb-number-icon"><img src="images/bomb-bonus.png" /></div>
+            <div id="game-pulse"></div>
         </div>
     </div>
-
-    <!--<code>use scrict import JSJSJS
-        adsfkjdshk
-    </code>-->
-    <!--<script type="text/javascript" src="js/oop-structure.js"></script>-->
 
     <script type="text/javascript" src="js/resourses.js"></script>
     <script type="text/javascript" src="js/renderer.js"></script>
 
-    <script type="text/javascript" src="js/new-components.js"></script>
+    <script type="text/javascript" src="js/components.js"></script>
+    <script type="text/javascript" src="js/generators.js"></script>
 
     <script type="text/javascript" src="js/helpers.js"></script>
-    <script type="text/javascript" src="js/components.js"></script>
-    <!--<script type="text/javascript" src="js/main.js"></script>-->
-    <script type="text/javascript" src="js/new-main.js"></script>
+    <script type="text/javascript" src="js/levels.js"></script>
+
+    <script type="text/javascript" src="js/main.js"></script>
 </body>
 
 </html>
