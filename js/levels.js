@@ -24,7 +24,7 @@
         'rock 510 420 30',
         'rock 500 350 30',
         'rock 530 280 30',
-        'rock 600 255 27',
+        'rock 600 260 27',
         'rock 670 280 30',
 
         'tree 720 320 25',
@@ -51,7 +51,8 @@
         'rock 910 300 25',
         'rock 970 320 40',
         'rock 970 385 30',
-        'rock 990 250 25',
+        'rock 985 265 25',
+        'rock 940 265 25',
         'rock 1050 360 45',
         'rock 1100 410 20',
 
@@ -59,9 +60,10 @@
         'rock 50 200 40',
         'rock 90 250 20',
         'rock 135 240 25',
-        'rock 20 360 20',
         'rock 100 410 30',
         'rock 150 380 30',
+        'rock 135 475 30',
+        'rock 130 520 20',
 
         // левый лес
         'tree 30 420 30',
@@ -81,6 +83,10 @@
         'tree 270 170 35',
         'tree 190 245 20',
         'tree 185 130 25',
+        'tree 245 90 30',
+        'tree 295 45 25',
+        'tree 240 35 20',
+        'tree 175 45 45',
 
         // нижняя левая гряда
         'rock 340 630 30',
@@ -91,6 +97,7 @@
         'rock 340 510 20',
         'rock 310 470 30',
         'rock 550 605 25',
+        'rock 580 660 40',
 
         // нижний лес
         'tree 430 450 25',
@@ -119,12 +126,63 @@
         'tree 840 295 45',
         'tree 660 165 25',
 
+        // верхний лес
+        'tree 560 25 25',
+        'tree 575 70 20',
+        'tree 630 50 40',
+        'tree 705 20 25',
+        'tree 740 70 30',
+        'tree 750 10 20',
+        'tree 835 85 25',
+        'tree 845 140 30',
+        'tree 810 30 35',
+
+        // верхняя правая гряда
+        'rock 1110 55 30',
+        'rock 1085 15 20',
+        'rock 1160 20 25',
+        'rock 1165 80 35',
+        'rock 1320 205 35',
+        'rock 1285 270 40',
+        'rock 1340 330 45',
+        'rock 1345 270 20',
+        'rock 1325 415 40',
+        'rock 1340 480 30',
+        'rock 1225 250 25',
+        'rock 1110 115 25',
+        'rock 1020 30 30',
+
+        // нижняя правая гряда
+        'rock 865 645 45',
+        'rock 935 595 35',
+        'rock 1005 580 25',
+
+        // нижний правый лес
+        'tree 950 640 35',
+        'tree 1020 630 25',
+        'tree 1060 565 40',
+        'tree 1015 495 35',
+        'tree 1020 420 30',
+        'tree 975 450 25',
+        'tree 965 535 30',
+        'tree 1065 470 20',
+        'tree 1135 445 35',
+        'tree 1130 515 30',
+        'tree 1170 595 45',
+
+        // правый верхний лес
+        'tree 1050 270 30',
+        'tree 1060 190 40',
 
 
 
         // 'tree 300 400 50',
         // 'fly 1000 300 15',
 
+        // паучьи норы
+        'lair 70 70 60',
+        'lair 60 600 50',
+        'lair 1300 70 50',
         // пауки 
         'spider 50 50 25',
         'spider 50 620 30',
@@ -144,7 +202,8 @@
         // 'spider 1200 100 30',
         // 'spider 1300 600 60',
 
-        'player 625 380 40'
+        // 'player 625 380 40'
+        'player 625 380 35'
     ];
 
     function Level(levelMap) {
@@ -154,7 +213,8 @@
         levelMap.forEach(function(levelMapItem) {
             var parts = levelMapItem.split(' ');
             var component = parts[0]
-            if (component == 'rock' || component == 'tree' || component == 'spider' || component == 'fly' || component == 'player') {
+            if (component == 'rock' || component == 'tree' || component == 'spider' ||
+                component == 'lair' || component == 'fly' || component == 'player') {
                 self.levelMap.push({
                     type: component,
                     center: { x: +parts[1], y: +parts[2] },
@@ -176,6 +236,9 @@
                     break;
                 case 'spider':
                     window.spiders.push(new components.Spider(item.center, item.radius));
+                    break;
+                case 'lair':
+                    window.lairs.push(new components.Lair(item.center, item.radius));
                     break;
                 case 'fly':
                     window.flies.push(new components.Fly(item.center, item.radius));

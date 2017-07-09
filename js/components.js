@@ -85,6 +85,8 @@
         renderer.clearCircle({ center: self.center, radius: self.radius });
 
         window.trees = window.trees.filter(function(tree) { return tree != self }, self);
+
+        window.player.reduceHealthBy(Math.round(self.radius / 7));
     }
 
     // Tree.prototype.temp1 = function() {
@@ -269,9 +271,9 @@
 
         if (self.bulletNumber > 0 && currentTime - self.previousShotTime >= Math.round(1000 / self.fireRate)) {
             var center = Object.assign({}, self.center);
-            center.x += Math.round(36 * Math.sin(self.angle + 0.5));
-            center.y += (-1) * Math.round(36 * Math.cos(self.angle + 0.5)); //0.6 33
-            window.bullets.push(new Bullet(center, 10, self.angle));
+            center.x += Math.round(25 * Math.sin(self.angle + 0.65)); // 36 0.5
+            center.y += (-1) * Math.round(25 * Math.cos(self.angle + 0.65)); //33 0.6 // 36 0.5 
+            window.bullets.push(new Bullet(center, 8, self.angle)); // 10
             self.previousShotTime = currentTime;
 
             self.bulletNumber--;
@@ -288,6 +290,12 @@
         var self = this;
         self.cureNumber++;
         self.cureNumber = Math.min(self.cureNumber, self.maxCureNumber);
+    }
+
+    Player.prototype.addBomb = function() {
+        var self = this;
+        self.bombNumber++;
+        self.bombNumber = Math.min(self.bombNumber, self.maxBombNumber);
     }
 
     Player.prototype.updateBombing = function() {
@@ -608,6 +616,82 @@
         // });
     }
 
+    // Spider's lair
+
+    function Lair(center, radius) {
+        Component.apply(this, arguments);
+        this.image = resourses.get('images/lair.png');
+        renderer.makeCircle({ center: this.center, radius: this.radius, image: this.image });
+
+        this.maxHealth = 300;
+        this.health = 300;
+        this.safetyDistance = 10000;
+
+        this.minSpiderRadius = 20;
+        this.maxSpiderRadius = this.radius;
+
+        this.spiderCreationFrameProbability = Lair.spiderCreationProbability / window.framesPerSecond;
+        this.spiderCreationFrameProbabilityRange = Math.round(1 / this.spiderCreationFrameProbability)
+    }
+
+    Lair.maxSpidersCount = 30;
+
+    Lair.spiderCreationProbability = 1 / 5; // per second   
+
+    Lair.prototype = Object.create(Component.prototype);
+    Lair.prototype.constructor = Lair;
+
+    Lair.prototype.die = function() {
+        var self = this;
+        renderer.clearCircle({ center: self.center, radius: self.radius });
+
+        // update player score
+        window.player.addScore(self.maxHealth);
+
+        window.lairs = window.lairs.filter(function(lair) { return lair != self }, self);
+    }
+
+    Lair.prototype.reduceHealthBy = function(value) {
+        var self = this;
+        self.health -= value;
+        if (self.health <= 0) {
+            self.die();
+        }
+    }
+
+    Lair.prototype.restoreHealthBy = function(value) {
+        var self = this;
+        self.health = Math.min(self.health + value, self.maxHealth);
+    }
+
+    Lair.prototype.update = function() {
+        var self = this;
+
+        // intersection with player
+        if (!window.player.dead && self.hasIntersectionWith(window.player)) {
+            window.player.reduceHealthBy(2);
+        }
+
+        if (window.spiders.length < Lair.maxSpidersCount) {
+            var hasIntersectionWithSpiders = window.spiders.some(function(spider) {
+                return self.hasIntersectionWith(spider); //self.distanceSquareTo(spider) > self.safetyDistance;
+            });
+            if (!hasIntersectionWithSpiders && randomIntInRange(0, self.spiderCreationFrameProbabilityRange) == 0) {
+                self.createSpider();
+            }
+        }
+        renderer.clearCircle({ center: self.center, radius: self.radius });
+        renderer.makeCircle({ center: self.center, radius: self.radius, image: self.image });
+    }
+
+    Lair.prototype.createSpider = function() {
+        var self = this;
+        var radius = randomIntInRange(self.minSpiderRadius, self.maxSpiderRadius);
+        self.restoreHealthBy(radius);
+        var center = Object.assign({}, self.center);
+        window.spiders.push(new Spider(center, radius));
+    }
+
     // Fly (Bonuce)
 
     function Fly(center, radius) {
@@ -750,6 +834,8 @@
         renderer.clearCircle({ center: self.center, radius: self.radius });
         var explosion = new Explosion(self.center, self.radius * 4);
 
+        // spiders injury
+
         window.spiders.forEach(function(spider) {
             var distanceToSpider = self.distanceSquareTo(spider) / 10000;
             if (distanceToSpider <= self.injuryRadius) {
@@ -758,10 +844,21 @@
             }
         });
 
+        // trees injury
+
         window.trees.forEach(function(tree) {
             var distanceToTree = self.distanceSquareTo(tree) / 1000 / 2;
             if (distanceToTree <= self.injuryRadius) {
                 tree.burn();
+            }
+        });
+
+        //lairs injury
+
+        window.lairs.forEach(function(lair) {
+            var distanceToLair = self.distanceSquareTo(lair) / 10000;
+            if (distanceToLair <= self.injuryRadius) {
+                lair.reduceHealthBy(Math.round(100 / distanceToLair));
             }
         });
 
@@ -856,6 +953,8 @@
             return;
         }
 
+        // trees injury
+
         var hasIntersectionWithTrees = false;
         window.trees.forEach(function(tree) {
             if (self.hasIntersectionWith(tree)) {
@@ -868,6 +967,8 @@
             return;
         }
 
+        // rocks injury
+
         var hasIntersectionWithRocks = window.rocks.some(function(rock) {
             return self.hasIntersectionWith(rock);
         });
@@ -876,11 +977,13 @@
             return;
         }
 
+        // spider injury
+
         var hasIntersectionWithSpiders = false;
         window.spiders.forEach(function(spider) {
             if (self.hasIntersectionWith(spider)) {
                 hasIntersectionWithSpiders = true;
-                spider.reduceHealthBy(10); // TODO tree.burn(); // TODO bulletPower changes depending on the distance between player and spider
+                spider.reduceHealthBy(5); // TODO tree.burn(); // TODO bulletPower changes depending on the distance between player and spider
             }
         });
 
@@ -888,6 +991,22 @@
             self.explode();
             return;
         }
+
+        // lairs injury
+
+        var hasIntersectionWithLairs = false;
+        window.lairs.forEach(function(lair) {
+            if (self.hasIntersectionWith(lair)) {
+                hasIntersectionWithLairs = true;
+                lair.reduceHealthBy(5); // TODO tree.burn(); // TODO bulletPower changes depending on the distance between player and spider
+            }
+        });
+
+        if (hasIntersectionWithLairs) {
+            self.explode();
+            return;
+        }
+
 
         // self.center.x -= self.speed.x;
         // self.center.y -= self.speed.y;
@@ -914,10 +1033,11 @@
         this.speed = { rotation: 0.1 };
         this.angle = 0;
         this.creationTime = window.getTime();
+        this.maxFrameNumber = 200;
 
-        this.timeout = setTimeout(function() { // TODO fix bonus on pause
-            if (this) { this.disappear(); };
-        }.bind(this), 10000);
+        // this.timeout = setTimeout(function() { // TODO fix bonus on pause
+        //     if (this) { this.disappear(); };
+        // }.bind(this), 10000);
     }
 
     Bonus.prototype = Object.create(Component.prototype);
@@ -930,12 +1050,10 @@
 
         // self.angle += self.speed.rotation;
 
-
-
         renderer.clearCircle({ center: self.center, radius: self.radius });
-        self.radius = 30 * (Math.sin((window.getTime() + self.creationTime) / 3) + 1.7); // 500 120 / 1.5
-        self.radius = Math.max(self.radius, 25); // 25
-        self.radius = Math.min(self.radius, 30); // 30
+        self.radius = 20 * (Math.sin((window.getTime() + self.creationTime) / 3) + 1.7); // 500 120 / 1.5 // 30 3 1.7
+        self.radius = Math.max(self.radius, 15); // 25
+        self.radius = Math.min(self.radius, 20); // 30
         renderer.makeTurnedCircle({ center: self.center, radius: self.radius, angle: self.angle, image: self.image });
     }
 
@@ -951,10 +1069,10 @@
         if (!CureBonus.image) {
             CureBonus.image = resourses.get('images/cure-bonus.png');
         }
-        Bonus.call(this, center, 30, CureBonus.image);
+        Bonus.call(this, center, 20, CureBonus.image);
     }
 
-    CureBonus.size = 30;
+    CureBonus.size = 20;
 
     CureBonus.prototype = Object.create(Bonus.prototype);
     CureBonus.prototype.constructor = CureBonus;
@@ -963,9 +1081,15 @@
         var self = this;
         Bonus.prototype.update.apply(self, arguments);
 
+        self.frameNumber++;
+
         if (self && self.hasIntersectionWith(window.player)) {
             window.player.addCure();
-            clearTimeout(self.timeout);
+            // clearTimeout(self.timeout);
+            self.disappear();
+        }
+
+        if (self.frameNumber >= self.maxFrameNumber) {
             self.disappear();
         }
     }
@@ -974,12 +1098,12 @@
         if (!BulletBonus.image) {
             BulletBonus.image = resourses.get('images/bullet-bonus.png');
         }
-        Bonus.call(this, center, 30, BulletBonus.image);
+        Bonus.call(this, center, 20, BulletBonus.image);
 
         // console.log(Bullet BulletBonus); //Bonus.hasIntersectionWith
     }
 
-    BulletBonus.size = 30;
+    BulletBonus.size = 20;
 
     BulletBonus.prototype = Object.create(Bonus.prototype);
     BulletBonus.prototype.constructor = BulletBonus;
@@ -988,9 +1112,46 @@
         var self = this;
         Bonus.prototype.update.apply(self, arguments);
 
+        self.frameNumber++;
+
         if (self && self.hasIntersectionWith(window.player)) {
             window.player.addBullets(50);
-            clearTimeout(self.timeout);
+            // clearTimeout(self.timeout);
+            self.disappear();
+        }
+
+        if (self.frameNumber >= self.maxFrameNumber) {
+            self.disappear();
+        }
+    }
+
+    function BombBonus(center) {
+        if (!BombBonus.image) {
+            BombBonus.image = resourses.get('images/bomb-bonus.png');
+        }
+        Bonus.call(this, center, 20, BombBonus.image);
+
+        // console.log(Bullet BulletBonus); //Bonus.hasIntersectionWith
+    }
+
+    BombBonus.size = 20;
+
+    BombBonus.prototype = Object.create(Bonus.prototype);
+    BombBonus.prototype.constructor = BombBonus;
+
+    BombBonus.prototype.update = function() {
+        var self = this;
+        Bonus.prototype.update.apply(self, arguments);
+
+        self.frameNumber++;
+
+        if (self && self.hasIntersectionWith(window.player)) {
+            window.player.addBomb();
+            // clearTimeout(self.timeout);
+            self.disappear();
+        }
+
+        if (self.frameNumber >= self.maxFrameNumber) {
             self.disappear();
         }
     }
@@ -1004,9 +1165,11 @@
         Home: Home,
         Fly: Fly,
         Spider: Spider,
+        Lair: Lair,
         Bullet: Bullet,
         BulletBonus: BulletBonus,
-        CureBonus: CureBonus
+        CureBonus: CureBonus,
+        BombBonus: BombBonus
     };
 })();
 

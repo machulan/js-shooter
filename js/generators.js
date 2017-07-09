@@ -5,16 +5,20 @@
         this.bounds = renderer.getBounds();
         this.bulletBonusSize = components.BulletBonus.size;
         this.cureBonusSize = components.CureBonus.size;
+        this.bombBonusSize = components.BombBonus.size;
 
         this.bulletBonusFrameProbability = BonusGenerator.bulletBonusProbability / window.framesPerSecond;
         this.cureBonusFrameProbability = BonusGenerator.cureBonusProbability / window.framesPerSecond;
+        this.bombBonusFrameProbability = BonusGenerator.bombBonusProbability / window.framesPerSecond;
 
         this.bulletBonusFrameProbabilityRange = Math.round(1 / this.bulletBonusFrameProbability);
         this.cureBonusFrameProbabilityRange = Math.round(1 / this.cureBonusFrameProbability);
+        this.bombBonusFrameProbabilityRange = Math.round(1 / this.bombBonusFrameProbability);
     }
 
-    BonusGenerator.bulletBonusProbability = 1 / 5; // per second
-    BonusGenerator.cureBonusProbability = 1 / 5; // per second
+    BonusGenerator.bulletBonusProbability = 1 / 7; // per second
+    BonusGenerator.cureBonusProbability = 1 / 7; // per second
+    BonusGenerator.bombBonusProbability = 1 / 20; // per second
 
     BonusGenerator.prototype.update = function() {
         var self = this;
@@ -34,6 +38,14 @@
             };
             window.bonuses.push(new components.CureBonus(center));
         }
+
+        if (randomIntInRange(0, self.bombBonusFrameProbabilityRange) == 1) {
+            var center = {
+                x: randomIntInRange(self.bounds.left + self.bombBonusSize, self.bounds.right - self.bombBonusSize),
+                y: randomIntInRange(self.bounds.top + self.bombBonusSize, self.bounds.bottom - self.bombBonusSize),
+            };
+            window.bonuses.push(new components.BombBonus(center));
+        }
     }
 
     function FlyGenerator() {
@@ -46,7 +58,7 @@
         this.flyHatchingFrameProbabilityRange = Math.round(1 / this.flyHatchingFrameProbability);
     }
 
-    FlyGenerator.flyHatchingProbability = 1 / 3;
+    FlyGenerator.flyHatchingProbability = 1 / 7;
 
     FlyGenerator.prototype.update = function() {
         var self = this;

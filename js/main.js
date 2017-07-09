@@ -91,6 +91,7 @@ var flies = [];
 var flyGenerator;
 
 var spiders = [];
+var lairs = [];
 
 var bombs = [];
 var bullets = [];
@@ -98,7 +99,7 @@ var bullets = [];
 var bonusGenerator;
 var bonuses = [];
 
-var framesPerSecond = 20;
+var framesPerSecond = 20; // 20
 // var timeInterval = 1000 / framesPerSecond;
 
 function init() {
@@ -152,9 +153,36 @@ function init() {
         keys[e.keyCode] = false;
     });
 
+    // clear component storages
+    keys = [];
+
+    level = null;
+
+    player = null;
+    home = null;
+    trees = [];
+    rocks = [];
+    rockCreator = null;
+
+    flies = [];
+    flyGenerator = null;
+
+    spiders = [];
+    lairs = [];
+
+    bombs = [];
+    bullets = [];
+
+    bonusGenerator = null;
+    bonuses = [];
+
     // initialize level
     level = new levels.Level(levels.simpleLevelMap);
     level.construct();
+
+    // var center = { x: 60, y: 60 };
+    // var radius = 50;
+    // lairs.push(new components.Lair(center, radius));
 
     // initialize trees
     // var center = { x: 100, y: 100 };
@@ -243,12 +271,20 @@ function start() {
 
 function update() {
     // update game
+    if (lairs.length == 0 && spiders.length == 0) { // win condition
+        pause();
+        setTimeout(win, 2000);
+    }
+
+
 
 
     player.update();
+
     spiders.forEach(function(spider) {
         spider.update();
     });
+
     rocks.forEach(function(rock) {
         rock.update();
     })
@@ -261,6 +297,11 @@ function update() {
     trees.forEach(function(tree) {
         tree.update();
     });
+
+    lairs.forEach(function(lair) {
+        lair.update();
+    });
+
     bombs.forEach(function(bomb) {
         bomb.update();
     });
@@ -409,6 +450,7 @@ resourses.load(['images/home.png',
     'images/spider_frame_1.png',
     'images/spider_frame_2.png',
     'images/spider_frame_3.png',
+    'images/lair.png',
     // 'images/arrow.png',
     'images/bomb_frame_0.png',
     'images/bomb_frame_1.png',
@@ -421,6 +463,7 @@ resourses.load(['images/home.png',
     'images/bullet.png',
     'images/bullet-bonus.png',
     'images/cure-bonus.png',
+    'images/bomb-bonus.png',
     'images/shit-piece.png'
 ]);
 // when resourses loaded show welcome screen
