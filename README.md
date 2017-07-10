@@ -4,7 +4,7 @@ Terrible hungry spiders captured your forest. Fortunately, you are a special for
 
 Your task is to kill all the spiders and exterminate all spider's lairs.
 
-Warning! Spider may sting you!
+Warning! Spiders may sting you!
 ## Control
 - move to the left - :arrow_backward: or A
 - move to the right - :arrow_forward: or D
