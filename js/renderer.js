@@ -1,4 +1,8 @@
 (function() {
+    /**
+     * Модуль отрисовки компонент игры на экране.
+     */
+
     var canvas = false;
     var context = false;
 

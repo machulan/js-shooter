@@ -1,4 +1,9 @@
 (function() {
+    /**
+     * Модуль с уровнями игры и логикой их загрузки.
+     */
+
+    // тестовй уровень игры
     testLevelMap = [
         'rock 1000 100 50',
         'rock 1000 180 40',
@@ -13,9 +18,7 @@
         'player 100 100 40'
     ];
 
-    // components.Rock({ x: 1000, y: 100 }, 30),
-    //     components.Fly({ x: 1000, y: 300 }, 15),
-    //     components.Spider({ x: 700, y: 200 }, 30)
+    // простой уровень игры
 
     simpleLevelMap = [
         // 'rock 650 330 30', // center rock

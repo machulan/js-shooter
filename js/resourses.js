@@ -1,4 +1,9 @@
 (function() {
+    /**
+     *  Модуль для загрузки ресурсов игры (изображений).
+     */
+
+
     var imageCache = {};
     var onloadCallback;
     var currentImageUrls = [];

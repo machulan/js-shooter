@@ -1,3 +1,7 @@
+/**
+ * Главный скрипт игры, реализующий ее жизненный цикл и управляющий DOM элементами.
+ */
+
 var startTime;
 var pauseStartTime;
 var interval;
@@ -95,6 +99,7 @@ var lairs = [];
 
 var bombs = [];
 var bullets = [];
+var explosions = [];
 
 var bonusGenerator;
 var bonuses = [];
@@ -172,6 +177,7 @@ function init() {
 
     bombs = [];
     bullets = [];
+    explosions = [];
 
     bonusGenerator = null;
     bonuses = [];
@@ -277,8 +283,6 @@ function update() {
     }
 
 
-
-
     player.update();
 
     spiders.forEach(function(spider) {
@@ -291,6 +295,11 @@ function update() {
     flies.forEach(function(fly) {
         fly.update();
     });
+
+    lairs.forEach(function(lair) {
+        lair.update();
+    });
+
     bonuses.forEach(function(bonus) {
         bonus.update();
     });
@@ -298,15 +307,15 @@ function update() {
         tree.update();
     });
 
-    lairs.forEach(function(lair) {
-        lair.update();
-    });
-
     bombs.forEach(function(bomb) {
         bomb.update();
     });
     bullets.forEach(function(bullet) {
         bullet.update();
+    });
+
+    explosions.forEach(function(explosion) {
+        explosion.update();
     });
 
 
@@ -468,71 +477,3 @@ resourses.load(['images/home.png',
 ]);
 // when resourses loaded show welcome screen
 resourses.onload(welcome);
-
-
-
-
-window.addEventListener('click', function(e) {
-    e.preventDefault();
-    // debugger;
-    var x = e.clientX;
-    var y = Math.round(parseFloat(e.clientY) * 100 / 94);
-    // var y = (+e.clientY * 100 / 94).toString(); // ; // / 2;
-    var coords = '(' + x + ', ' + y + ')';
-    updateGamePulse(coords);
-});
-
-// temp CLEAR CIRCLE:
-// var curcenter = { x: 100, y: 200 };
-// var prevcenter = curcenter;
-
-// function update() {
-//     curcenter.x += 4;
-//     var ctx = renderer.getContext();
-//     ctx.fillStyle = "#ff9900";
-//     ctx.rect(0, 0, 1366, 662);
-//     ctx.fill();
-
-
-//     renderer.clearCircle({ center: prevcenter, radius: 50 });
-//     renderer.makeCircle({ center: curcenter, radius: 50, image: resourses.get('images/Machulazz_face.png') });
-
-//     prevcenter = curcenter;
-// }
-
-
-
-
-//below was
-
-
-// function init() {
-//     console.log('init running...');
-//     document.getElementById('play-again').addEventListener('click', function() {
-//         reset();
-//     });
-
-//     reset();
-//     startTime = Date.now();
-//     main();
-// }
-
-// function main() {
-//     var dt = Date.now() - startTime;
-//     update(dt);
-//     render();
-//     requestAnimationFrame(main);
-// }
-
-// function update(dt) {
-//     handleInput();
-
-// }
-
-// function render(dt) {
-
-// }
-
-// function pause() {
-
-// }

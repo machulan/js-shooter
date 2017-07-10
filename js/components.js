@@ -1,5 +1,8 @@
-// export let one = 1;
 (function() {
+    /**
+     * Модуль с классами компонент игры.
+     */
+
     const LEFT_ARROW_KEY_CODE = 37;
     const UP_ARROW_KEY_CODE = 38;
     const RIGHT_ARROW_KEY_CODE = 39;
@@ -30,7 +33,13 @@
     }
 
     Component.prototype.distanceSquareTo = function(component) {
-        return Component.numberSquare(this.center.x - component.center.x) + Component.numberSquare(this.center.y - component.center.y);
+        var self = this;
+        return Component.numberSquare(self.center.x - component.center.x) + Component.numberSquare(self.center.y - component.center.y);
+    }
+
+    Component.prototype.distanceTo = function(component) {
+        var self = this;
+        return Math.floor(Math.sqrt(self.distanceSquareTo(component)));
     }
 
     Component.prototype.hasIntersectionWith = function(component) {
@@ -472,6 +481,7 @@
             ];
         }
         this.frameNumber = 0;
+        this.imageNumber = 0;
 
         renderer.makeCircle({ center: this.center, radius: this.radius, image: Spider.images[0] });
 
@@ -524,8 +534,11 @@
         self.speedsWasReduced = false;
         self.triedToReduceSpeedX = false;
         self.triedToReduceSpeedY = false;
+
+        // if (self.speed.x != 0 && self.speed.y != 0) {
         self.frameNumber = (self.frameNumber + 1) % 10; // 10
         self.imageNumber = Math.floor(self.frameNumber / 2); // 5
+        // }
         self.updatePosition();
     }
 
@@ -546,14 +559,28 @@
     Spider.prototype.updateSpeed = function() {
         var self = this;
 
-        // self.stop();
+        // if (randomIntInRange(0, 3) == 0) {
+        //     self.stop();
+        // }
+        // var distanceSquareToPlayer = self.distanceSquareTo(window.player);
+
+        // if (10000 < distanceSquareToPlayer && distanceSquareToPlayer < 20000) {
+        //     // spider wants sting the player
+        //     // var power = 1;
+        //     // self.speed.x = Math.round(power * (window.player.center.x - self.center.x) / distanceSquareToPlayer);
+        //     // self.speed.y = Math.round(power * (window.player.center.y - self.center.y) / distanceSquareToPlayer);
+        //     // self.speed.x = Math.round(self.speed.x / Math.abs(self.speed.x));
+        //     // self.speed.y = Math.round(self.speed.y / Math.abs(self.speed.y));
+        //     // self.speed.x = 30;
+        // } else {
         if (randomIntInRange(0, 10) == 0) {
             var xSign = randomIntInRange(-1, 1);
-            self.speed.x = randomIntInRange(1, 5) * xSign;
+            self.speed.x = randomIntInRange(1, 7) * xSign;
 
             var ySign = randomIntInRange(-1, 1);
-            self.speed.y = randomIntInRange(1, 5) * ySign;
+            self.speed.y = randomIntInRange(1, 7) * ySign;
         }
+        // }
     }
 
     Spider.prototype.updatePosition = function() {
@@ -636,7 +663,7 @@
 
     Lair.maxSpidersCount = 30;
 
-    Lair.spiderCreationProbability = 1 / 5; // per second   
+    Lair.spiderCreationProbability = 1 / 1.5; // per second   
 
     Lair.prototype = Object.create(Component.prototype);
     Lair.prototype.constructor = Lair;
@@ -669,7 +696,7 @@
 
         // intersection with player
         if (!window.player.dead && self.hasIntersectionWith(window.player)) {
-            window.player.reduceHealthBy(2);
+            window.player.reduceHealthBy(3);
         }
 
         if (window.spiders.length < Lair.maxSpidersCount) {
@@ -701,10 +728,15 @@
 
         this.speed = { x: 0, y: 0 };
         this.health = radius;
+
+        this.frameNumber = 0;
+        this.maxFrameNumber = Math.round(window.framesPerSecond * Fly.lifetime / 1000);
     }
 
     Fly.prototype = Object.create(Component.prototype);
     Fly.prototype.constructor = Fly;
+
+    Fly.lifetime = 30000; // ms
 
     Fly.prototype.kill = function() {
         var self = this;
@@ -729,11 +761,17 @@
 
     Fly.prototype.update = function() {
         var self = this;
+        self.frameNumber++;
+
         self.updateSpeed();
         self.speedsWasReduced = false;
         self.triedToReduceSpeedX = false;
         self.triedToReduceSpeedY = false;
         self.updatePosition();
+
+        if (self.frameNumber >= self.maxFrameNumber) {
+            self.die();
+        }
     }
 
     Fly.prototype.stop = function() {
@@ -809,8 +847,11 @@
 
         this.injuryRadius = 10; // 15
 
-        setTimeout(function() { this.explode(); }.bind(this), 3000);
+        this.maxFrameNumber = Math.round(window.framesPerSecond * Bomb.delay / 1000);
+        // setTimeout(function() { this.explode(); }.bind(this), 3000);
     }
+
+    Bomb.delay = 3000; // ms
 
     Bomb.prototype = Object.create(Component.prototype);
     Bomb.prototype.constructor = Bomb;
@@ -819,10 +860,14 @@
         var self = this;
         renderer.clearCircle({ center: self.center, radius: self.radius });
 
-        self.frameNumber = (self.frameNumber + 1) % 10; // 10
-        self.imageNumber = Math.floor(self.frameNumber / 2); // 5
+        self.frameNumber++; // 10
+        self.imageNumber = Math.floor((self.frameNumber % 10) / 2); // 5
 
         renderer.makeCircle({ center: self.center, radius: self.radius, image: Bomb.images[self.imageNumber] });
+
+        if (self.frameNumber >= self.maxFrameNumber) {
+            self.explode();
+        }
     }
 
     Bomb.prototype.explode = function() {
@@ -832,7 +877,7 @@
         // console.log('center: ', self);
 
         renderer.clearCircle({ center: self.center, radius: self.radius });
-        var explosion = new Explosion(self.center, self.radius * 4);
+        window.explosions.push(new Explosion(self.center, self.radius * 4));
 
         // spiders injury
 
@@ -883,10 +928,11 @@
         // console.log(this.radius);
 
         this.frameNumber = 0;
-        this.frameCount = 8; //7
+        this.maxFrameNumber = 3; //7
         this.imageNumber = 0;
 
-        this.interval = setInterval(function() { this.update() }.bind(this), 20); // 30
+        // this.interval = setInterval(function() { this.update() }.bind(this), 20); // 30
+
         // console.log('explosion constructor');
         // this.frameNumber = 0;
         // renderer.makeCircle({ center: this.center, radius: this.radius, image: Bomb.images[0] });
@@ -912,20 +958,27 @@
         //     renderer.clearCircle({ center: self.center, radius: 20 * Explosion.images.length });
         //     clearInterval(self.interval);
         // }
-        if (self.frameNumber < self.frameCount) {
+        if (self.frameNumber < self.maxFrameNumber) {
             renderer.makeCircle({
                 center: self.center,
-                radius: Math.min(Math.round(30 * Math.sqrt((self.frameNumber + 1))), self.radius),
+                radius: Math.min(Math.round(40 * Math.sqrt((self.frameNumber + 1))), self.radius), // 30 // TODO
                 image: Explosion.images[0]
             });
             self.frameNumber++;
             // renderer.makeCircle({ center: self.center, radius: 2 * (self.frameNumber + 1) * (self.frameNumber + 1), image: Explosion.images[0] });
         } else {
-            renderer.clearCircle({ center: self.center, radius: Math.min(Math.round(30 * Math.sqrt((self.frameNumber))), self.radius) });
-            clearInterval(self.interval);
-            self = null;
+            self.disappear();
         }
         // self.imageNumber++;
+    }
+
+    Explosion.prototype.disappear = function() {
+        var self = this;
+        renderer.clearCircle({ center: self.center, radius: Math.min(Math.round(50 * Math.sqrt((self.frameNumber))), self.radius) });
+        // remove explosion
+        window.explosions = window.explosions.filter(function(explosion) {
+            return explosion != self;
+        });
     }
 
     function Bullet(center, radius, angle) {
@@ -998,7 +1051,7 @@
         window.lairs.forEach(function(lair) {
             if (self.hasIntersectionWith(lair)) {
                 hasIntersectionWithLairs = true;
-                lair.reduceHealthBy(5); // TODO tree.burn(); // TODO bulletPower changes depending on the distance between player and spider
+                lair.reduceHealthBy(2); // TODO tree.burn(); // TODO bulletPower changes depending on the distance between player and spider
             }
         });
 
@@ -1019,7 +1072,7 @@
     Bullet.prototype.explode = function() {
         var self = this;
         renderer.clearCircle({ center: self.center, radius: self.radius });
-        var explosion = new Explosion(self.center, 3 * self.radius);
+        window.explosions.push(new Explosion(self.center, 3 * self.radius));
         window.bullets = window.bullets.filter(function(bullet) {
             return bullet != self;
         });
@@ -1167,6 +1220,7 @@
         Spider: Spider,
         Lair: Lair,
         Bullet: Bullet,
+        Explosion: Explosion,
         BulletBonus: BulletBonus,
         CureBonus: CureBonus,
         BombBonus: BombBonus

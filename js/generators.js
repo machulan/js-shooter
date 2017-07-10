@@ -1,4 +1,8 @@
 (function() {
+    /**
+     * Модуль с генераторами случайных компонентов.
+     */
+
     function BonusGenerator() {
         // components.BulletBonus(center)
         // components.CureBonus(center)
@@ -58,7 +62,7 @@
         this.flyHatchingFrameProbabilityRange = Math.round(1 / this.flyHatchingFrameProbability);
     }
 
-    FlyGenerator.flyHatchingProbability = 1 / 7;
+    FlyGenerator.flyHatchingProbability = 1 / 5;
 
     FlyGenerator.prototype.update = function() {
         var self = this;
