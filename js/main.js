@@ -272,9 +272,6 @@ function start() {
     interval = setInterval(update, 1000 / framesPerSecond); // 50 // TODO 40 change bonuse animation
 }
 
-// var curcenter = { x: 100, y: 200 };
-// var prevcenter = { x: 100, y: 200 };
-
 function update() {
     // update game
     if (lairs.length == 0 && spiders.length == 0) { // win condition
@@ -329,12 +326,8 @@ function update() {
     updateBulletNumber(player.bulletNumber);
     updateBombNumber(player.bombNumber);
 
-    // updateScore(9999999999999);
 
     // updateGamePulse(Date.now() - startTime);
-
-    // updateScore(Date.now() - startTime);
-
 
 
     // if (Date.now() - startTime > 5000) {
@@ -342,27 +335,7 @@ function update() {
     //     win();
     // }
 
-
     // document.getElementById('new-game').addEventListener('click', gameOver);
-
-    // curcenter.x += 4;
-
-    // var context = renderer.getContext();
-    // var canvas = renderer.getCanvas();
-
-    // context.fillStyle = "#ddd";  
-    // context.fillRect(0, 0, canvas.width, canvas.height);
-    // renderer.makeCircle({ center: prevcenter, radius: 60, image: resourses.get('images/Machulazz_face.png') });
-
-    // a = 0 / 0;
-
-    // renderer.clearCircle({ center: prevcenter, radius: 50 });
-    // renderer.makeCircle({ center: curcenter, radius: 50, image: resourses.get('images/Machulazz_face.png') });
-
-
-
-    // prevcenter.x = curcenter.x;
-    // prevcenter.y = curcenter.y;
 
     // pause();
 }

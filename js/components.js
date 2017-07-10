@@ -82,7 +82,6 @@
     Tree.prototype.update = function() {
         var self = this;
         renderer.clearCircle({ center: self.center, radius: self.radius });
-        // Wall.prototype.updatePosition();
         renderer.makeCircle({ center: self.center, radius: self.radius, image: self.image });
     }
 
@@ -98,15 +97,6 @@
         window.player.reduceHealthBy(Math.round(self.radius / 7));
     }
 
-    // Tree.prototype.temp1 = function() {
-    //     console.log('temp1');
-    //     Tree.prototype.temp2();
-    // }
-
-    // Tree.prototype.temp2 = function() {
-    //     console.log('temp2');
-    // }
-
     // Rock
 
     function Rock(center, radius) {
@@ -121,7 +111,6 @@
     Rock.prototype.update = function() {
         var self = this;
         renderer.clearCircle({ center: self.center, radius: self.radius });
-        // Wall.prototype.updatePosition();
         renderer.makeCircle({ center: self.center, radius: self.radius, image: self.image });
     }
 
@@ -189,11 +178,6 @@
         var center2 = Object.assign({}, self.center);
         window.flies.push(new Fly(center1, 20));
         window.flies.push(new Fly(center2, 15));
-
-        //window.keys = []
-
-        // player.rotation = function() {};
-        // window.spiders = window.spiders.filter(function(spider) { return spider != self }, self);
     }
 
     Player.prototype.update = function() {
@@ -276,7 +260,6 @@
 
         if (!self.previousShotTime)
             self.previousShotTime = window.getTime() - Math.round(1000 / self.fireRate);
-        // if (window.bullets.length < 2) {
 
         if (self.bulletNumber > 0 && currentTime - self.previousShotTime >= Math.round(1000 / self.fireRate)) {
             var center = Object.assign({}, self.center);
@@ -323,7 +306,6 @@
 
         if (!self.previousBombTime)
             self.previousBombTime = window.getTime() - Math.round(1000 / self.bombRate);
-        // if (window.bullets.length < 2) {
 
         if (self.bombNumber > 0 && currentTime - self.previousBombTime >= Math.round(1000 / self.bombRate)) {
             var center = Object.assign({}, self.center);
@@ -1226,29 +1208,3 @@
         BombBonus: BombBonus
     };
 })();
-
-
-
-
-// function Parent(name) {
-//     this.name = name;
-//     console.log('parent ' + this.name + ' creating...');
-// }
-
-// Parent.prototype.run = function() {
-//     console.log('parent' + this.name + 'running...');
-// }
-
-// function ImprovedPlayer(name) {
-//     Parent.apply(this, arguments);
-//     console.log('player ' + this.name + ' creating...');
-// }
-
-// ImprovedPlayer.prototype = Object.create(Parent.prototype);
-// ImprovedPlayer.prototype.constructor = ImprovedPlayer;
-
-// ImprovedPlayer.prototype.walk = function() {
-//     console.log('player ' + this.name + ' walking...');
-// }
-
-//ImprovedPlayer.prototype.run =function
