@@ -269,6 +269,9 @@
             self.previousShotTime = currentTime;
 
             self.bulletNumber--;
+
+            // shot sound
+            audio.playShotSound();
         }
     }
 
@@ -950,6 +953,9 @@
             // renderer.makeCircle({ center: self.center, radius: 2 * (self.frameNumber + 1) * (self.frameNumber + 1), image: Explosion.images[0] });
         } else {
             self.disappear();
+
+            // explosion sound
+            audio.playExplosionSound(self.radius);
         }
         // self.imageNumber++;
     }

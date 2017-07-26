@@ -13,6 +13,7 @@ var cureNumberElement = document.getElementById('cure-number');
 var bulletNumberElement = document.getElementById('bullet-number');
 var bombNumberElement = document.getElementById('bomb-number');
 
+// var shotAudioElement = document.getElementById('shot-audio');
 
 var gamePulseElement = document.getElementById('game-pulse');
 
