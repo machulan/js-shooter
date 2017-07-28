@@ -510,6 +510,9 @@
         window.player.addScore(self.maxHealth);
 
         window.spiders = window.spiders.filter(function(spider) { return spider != self }, self);
+
+        // spider sound
+        audio.playSound();
     }
 
     Spider.prototype.update = function() {

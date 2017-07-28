@@ -1,5 +1,6 @@
 (function() {
     const SHOT_SOUND_SRC = 'audio/shot.mp3';
+    const SOUND_SRC = 'audio/sound.mp3';
 
     function playShotSound() {
         var shotSound = new Audio(SHOT_SOUND_SRC);
@@ -18,8 +19,13 @@
         explosionSound.play();
     }
 
+    function playSound() {
+        // new Audio(SOUND_SRC).play();
+    }
+
     window.audio = {
         playShotSound: playShotSound,
-        playExplosionSound: playExplosionSound
+        playExplosionSound: playExplosionSound,
+        playSound: playSound
     }
 })();

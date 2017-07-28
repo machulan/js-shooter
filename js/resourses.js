@@ -38,11 +38,11 @@
     }
 
     function get(url) {
-        image = imageCache[url]
+        var image = imageCache[url];
         if (!image) {
             throw new Error('There is no image in image cache with url: ' + url);
         }
-        return imageCache[url];
+        return image;
     }
 
     function onload(callback) {

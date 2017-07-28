@@ -6,16 +6,29 @@ var startTime;
 var pauseStartTime;
 var interval;
 
+var gameAreaElement = document.getElementById('game-area');
+
+// toolbar elements
+
+// toolbar buttons
+var startGameElement = document.getElementById('start-game');
+var pauseGameElement = document.getElementById('pause-game');
+
+// toolbar text elements
+
 var timerElement = document.getElementById('timer');
 var scoreElement = document.getElementById('score');
 var healthElement = document.getElementById('health');
 var cureNumberElement = document.getElementById('cure-number');
 var bulletNumberElement = document.getElementById('bullet-number');
 var bombNumberElement = document.getElementById('bomb-number');
+var gamePulseElement = document.getElementById('game-pulse');
+
+// other elements
 
 // var shotAudioElement = document.getElementById('shot-audio');
 
-var gamePulseElement = document.getElementById('game-pulse');
+// auxiliary functions
 
 function getTime() {
     return Date.now() - startTime;
@@ -66,7 +79,6 @@ function updateBombNumber(newBombNumber) {
 function updateGamePulse(newGamePulse) {
     gamePulseElement.innerHTML = newGamePulse;
 }
-
 
 function welcome() {
     // run welcome screen
@@ -126,8 +138,8 @@ function init() {
     // updateGamePulse(0);
 
     // event listeners
-    document.getElementById('start-game').addEventListener('click', start);
-    document.getElementById('pause-game').addEventListener('click', pause);
+    startGameElement.addEventListener('click', start);
+    pauseGameElement.addEventListener('click', pause);
     document.getElementById('new-game').addEventListener('click', init);
 
     // show toolbar
@@ -263,8 +275,8 @@ function start() {
     console.log('game started...');
 
     // fix toolbar
-    document.getElementById('start-game').disabled = true;
-    document.getElementById('pause-game').disabled = false;
+    startGameElement.disabled = true;
+    pauseGameElement.disabled = false;
 
     // if was paused
     startTime += Date.now() - pauseStartTime;
@@ -346,8 +358,8 @@ function pause() {
     console.log('game paused...')
 
     // fix toolbar
-    document.getElementById('pause-game').disabled = true;
-    document.getElementById('start-game').disabled = false;
+    pauseGameElement.disabled = true;
+    startGameElement.disabled = false;
 
     // save pause start time
     pauseStartTime = Date.now();
@@ -361,12 +373,11 @@ function win() {
     pause();
 
     // remove game area
-    var gameArea = document.getElementById('game-area');
-    gameArea.style.display = 'none';
+    gameAreaElement.style.display = 'none';
 
     // stop game
-    document.getElementById('start-game').disabled = true;
-    document.getElementById('pause-game').disabled = true;
+    startGameElement.disabled = true;
+    pauseGameElement.disabled = true;
     // document.getElementById('new-game').disabled = true;
 
     // hide toolbar
@@ -391,12 +402,11 @@ function gameOver() {
     // canvas.parentNode.removeChild(canvas);
 
     // remove game area
-    var gameArea = document.getElementById('game-area');
-    gameArea.style.display = 'none';
+    gameAreaElement.style.display = 'none';
 
     // stop game
-    document.getElementById('start-game').disabled = true;
-    document.getElementById('pause-game').disabled = true;
+    startGameElement.disabled = true;
+    pauseGameElement.disabled = true;
     // document.getElementById('new-game').disabled = true;
 
     // hide toolbar
@@ -407,7 +417,7 @@ function gameOver() {
     document.getElementById('game-over-score').innerHTML = player.score;
 
     // show game over screen
-    document.getElementById('play-again').addEventListener('click', init);
+    document.getElementById('game-over-play-again').addEventListener('click', init);
     document.getElementById('game-over').style.display = 'block';
     document.getElementById('game-over-overlay').style.display = 'block';
 }
